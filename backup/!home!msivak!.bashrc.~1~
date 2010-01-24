@@ -1,0 +1,67 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions
+#source ~/.completion/git-completion.bash
+
+#barvicky v promptu
+export PS1='\[\033[01;36m\]${debian_chroot:+($debian_chroot)}\u@\h\[\033[01;33m\]:\w\$ \[\033[00m\]'
+export PATH="$HOME/Applications:$HOME/opt/bin:$PATH:/usr/sbin:/sbin"
+export EDITOR="vim"
+
+export CVS_RSH="ssh"
+export CVSROOT=:gserver:cvs.devel.redhat.com:/cvs/dist
+
+export TODO_OPTIONS="--timeout --summary"
+
+autorun()
+{
+    p=$PWD; while [ "x$p" != "x/" -a "x$p" != "x$HOME" ]; do [ -r "$p/.bashrc.autorun" ] && . "$p/.bashrc.autorun" && echo "--- Autorunning $p/.bashrc.autorun script" && break; p=$(dirname "$p"); done
+}
+
+cd()
+{
+    if builtin cd "$@"; then
+	#config script autorun
+	autorun
+    fi
+}
+
+pushd()
+{
+    if builtin pushd "$@"; then
+	#config script autorun
+	autorun
+    fi
+}
+
+popd()
+{
+    if builtin popd "$@"; then
+	#config script autorun
+	autorun
+    fi
+}
+
+# Run todo initially upon login
+# devtodo ${TODO_OPTIONS}
+
+#Git
+GIT_AUTHOR_NAME="Martin Sivak"
+GIT_AUTHOR_EMAIL="msivak@redhat.com"
+GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+export GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
+
+ERL_LIBS=/usr/lib/erlang/lib/
+if [ -d $HOME/Library/Erlang/lib ]; then
+  ERL_LIBS=$HOME/Library/Erlang/lib:$ERL_LIBS
+fi
+export ERL_LIBS
+
+alias emacs="emacs -nw"
+
