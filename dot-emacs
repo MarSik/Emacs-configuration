@@ -11,6 +11,7 @@
 ;;
 
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 (windmove-default-keybindings)
 
 ;;
@@ -20,6 +21,14 @@
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (setq default-buffer-file-coding-system 'utf-8)
+
+;;
+;; C indentation
+;;
+
+(setq c-basic-offset 4)
+(setq-default indent-tabs-mode nil)  ;disable tabs as spaces
+(setq-default fill-column 80)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Libraries to autoload
