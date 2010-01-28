@@ -1,3 +1,6 @@
+;; Use "y or n" answers instead of full words "yes or no"
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;Reload .emacs on the fly
 (defun reload-dot-emacs()
   (interactive)
@@ -14,6 +17,14 @@
       kept-old-versions 2              ; Number of oldest versions to keep
       delete-old-versions t            ; Ask to delete excess backup versions?
       backup-by-copying-when-linked t) ; Copy linked files, don't rename.
+
+;;Place autosave files in a common location
+(defvar autosave-dir
+ (concat "~" (user-login-name) "/.emacs.d/autosave/"))
+
+(setq auto-save-file-name-transforms
+      `(("\\(?:[^/]*/\\)*\\(.*\\)", (concat autosave-dir "\\1") t))
+)
 
 ;Never put tabs in files, use spaces instead
 ;Note: Use C-q C-i to put a real tab should the need ever arise.
