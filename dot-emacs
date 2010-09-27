@@ -4,6 +4,11 @@
 (add-to-list 'load-path "~/.emacs.d")
 (progn (cd "~/.emacs.d") (normal-top-level-add-subdirs-to-load-path))
 
+;; Custom setup from inside of emacs
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)
+
 ;;
 ;; UI setup
 ;;
@@ -34,6 +39,13 @@
 (load-library "ryan-functions")
 
 ;;
+;; GnuPG
+;;
+
+(require 'epa)
+(epa-file-enable)
+
+;;
 ;; Snippets
 ;;
 
@@ -55,6 +67,12 @@
 ;;Python mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-library "ryan-python")
+
+;;
+;OrgMode
+;;
+(load "~/.emacs.d/org-mode/lisp/org.el")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;NXML mode
