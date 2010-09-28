@@ -106,8 +106,8 @@
 ;;
 ;OrgMode
 ;;
-(load "~/.emacs.d/org-mode/lisp/org.el")
-
+(setq load-path (cons "~/.emacs.d/org-mode/lisp" load-path))
+(load-library "org")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;NXML mode
