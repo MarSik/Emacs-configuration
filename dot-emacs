@@ -310,6 +310,13 @@
 (setq load-path (cons "~/.emacs.d/org-mode/lisp" load-path))
 (load-library "org")
 
+;;
+;Ledger
+;;
+(setq load-path (cons "~/.emacs.d/ledger/lisp" load-path))
+(load-library "ledger")
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;NXML mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

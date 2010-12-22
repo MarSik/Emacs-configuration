@@ -16,6 +16,7 @@
  '(ns-alternate-modifier nil)
  '(ns-tool-bar-display-mode nil t)
  '(ns-tool-bar-size-mode nil t)
+ '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(visual-line-mode nil t))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
