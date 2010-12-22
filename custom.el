@@ -8,7 +8,7 @@
  '(ecb-source-path nil)
  '(ecb-tip-of-the-day nil)
  '(ecb-tree-indent 2)
- '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track))))
+ '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track)))
  '(aquamacs-additional-fontsets nil t)
  '(aquamacs-customization-version-id 210 t)
  '(aquamacs-tool-bar-user-customization nil t)
