@@ -13,7 +13,7 @@
 ;; UI setup
 ;;
 
-(menu-bar-mode -1)
+(menu-bar-mode t)
 (tool-bar-mode -1)
 (windmove-default-keybindings)
 
@@ -31,15 +31,18 @@
 
 ; CEDET
 (load "~/.emacs.d/cedet/common/cedet.el")
+(require 'semantic)
+(require 'semantic-gcc)
+(require 'semantic-ia)
 (global-ede-mode 1)                      ; Enable the Project management system
 (semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
 (global-srecode-minor-mode 1)            ; Enable template insertion menu
-(require 'semantic-ia)
-(require 'semantic-gcc)
+(global-semanticdb-minor-mode 1)
+(semantic-load-enable-code-helpers)
+;(semantic-load-enable-primary-exuberent-ctags-support)
 ;(semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
 ;(setq-mode-local c-mode semanticdb-find-default-throttle
 ;                 '(project unloaded system recursive))
-
 
 ; Emacs Code Browser
 (add-to-list 'load-path "~/.emacs.d/ecb")
