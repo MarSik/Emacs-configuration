@@ -1,4 +1,4 @@
 export ALTERNATE_EDITOR=""
-alias emacs="emacsclient"
-alias em="emacsclient"
+alias emacs="emacsclient -c -n"
+alias em="emacsclient -n"
 export EDITOR="emacsclient"

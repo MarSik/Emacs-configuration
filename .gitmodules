@@ -1,3 +1,6 @@
 [submodule "org-mode"]
 	path = org-mode
 	url = git://repo.or.cz/org-mode.git
+[submodule "yasnippet-0.6.1c/snippets/text-mode/latex-mode"]
+	path = yasnippet-0.6.1c/snippets/text-mode/latex-mode
+	url = git://github.com/madsdk/yasnippets-latex.git

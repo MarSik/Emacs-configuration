@@ -58,6 +58,42 @@
 (setq-default indent-tabs-mode nil)  ;disable tabs as spaces
 (setq-default fill-column 80)
 
+;;
+;; Leading and Trailing whitespaces
+;;
+(require 'whitespace)
+
+;; display only tails of lines longer than 80 columns, tabs and
+;; trailing whitespaces
+(setq whitespace-line-column 80
+      whitespace-style '(face tabs trailing lines-tail))
+
+;; face for long lines' tails
+(set-face-attribute 'whitespace-line nil
+                    :background "red1"
+                    :foreground "white"
+                    :weight 'bold)
+
+;; face for Tabs
+(set-face-attribute 'whitespace-tab nil
+                    :background "red1"
+                    :foreground "white"
+                    :weight 'bold)
+
+;; nuke trailing whitespaces when writing to a file
+;; activate minor whitespace mode
+(mapc (lambda (hook)
+        (add-hook 'write-file-hooks 'delete-trailing-whitespace)
+        (add-hook hook 'whitespace-mode)
+        )
+      '(text-mode-hook
+        emacs-lisp-mode-hook
+        python-mode-hook
+        js2-mode-hook
+        )
+)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Libraries to autoload
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
