@@ -93,6 +93,70 @@
         )
 )
 
+;;;
+;;; IRC client
+;;;
+(require 'erc)
+
+; open queries in separate buffer
+(setq erc-auto-query 'bury)
+
+; open notices in query buffers
+(add-hook 'erc-after-connect
+              (lambda (server nick)
+                (add-hook 'erc-server-NOTICE-hook 'erc-auto-query)))
+
+; ignore server and join,part.. events
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                    "324" "329" "332" "333" "353" "477"))
+
+; treat query as if it contains my nick on every line (higlighting)
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p)
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
+
+; put input line at the bottom of the window
+(setq erc-input-line-position -2)
+(erc-scrolltobottom-disable)
+
+; reset chan tracking when I do not care
+(defun reset-erc-track-mode ()
+  (interactive)
+  (setq erc-modified-channels-alist nil)
+  (erc-modified-channels-update))
+(global-set-key (kbd "C-c r") 'reset-erc-track-mode)
+
+; irc servers
+(setq erc-autojoin-channels-alist
+          '(("freenode.net" "#anaconda" "#fedora")
+            ("irc.gts.sk" "#fit07")
+))
+
+(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
+(erc :server "irc.gts.sk" :port 6667 :nick "MarSik")
+
+;
+; Notifications
+;
+
+(require 'notify)
+(defun erc-global-notify (match-type nickuserhost message)
+  "Notify when a message is recieved."
+  (notify (format "%s in %s"
+                  ;; Username of sender
+                  (car (split-string nickuserhost "!"))
+                  ;; Channel
+                  (or (erc-default-target) "#unknown"))
+          ;; Remove duplicate spaces
+          (replace-regexp-in-string " +" " " message)
+          :icon "emacs-snapshot"
+          :timeout -1))
+
+(add-hook 'erc-text-matched-hook 'erc-global-notify)
+
+;(setq notify-method 'notify-via-libnotify)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Libraries to autoload
