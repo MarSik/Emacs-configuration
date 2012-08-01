@@ -29,20 +29,24 @@
 ;; IDE
 ;;
 
+; File annotations
+;(require 'org-annotate-file)
+;(global-set-key (kbd "C-c C-l") 'org-annotate-file)
+
 ; CEDET
-(load "~/.emacs.d/cedet/common/cedet.el")
-(require 'semantic)
-(require 'semantic-gcc)
-(require 'semantic-ia)
-(global-ede-mode 1)                      ; Enable the Project management system
-(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
-(global-srecode-minor-mode 1)            ; Enable template insertion menu
-(global-semanticdb-minor-mode 1)
-(semantic-load-enable-code-helpers)
-;(semantic-load-enable-primary-exuberent-ctags-support)
-;(semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
-;(setq-mode-local c-mode semanticdb-find-default-throttle
-;                 '(project unloaded system recursive))
+;(load "~/.emacs.d/cedet/common/cedet.el")
+;(require 'semantic)
+;(require 'semantic-gcc)
+;(require 'semantic-ia)
+;(global-ede-mode 1)                      ; Enable the Project management system
+;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion
+;(global-srecode-minor-mode 1)            ; Enable template insertion menu
+;(global-semanticdb-minor-mode 1)
+;(semantic-load-enable-code-helpers)
+;;(semantic-load-enable-primary-exuberent-ctags-support)
+;;(semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
+;;(setq-mode-local c-mode semanticdb-find-default-throttle
+;;                 '(project unloaded system recursive))
 
 ; Emacs Code Browser
 (add-to-list 'load-path "~/.emacs.d/ecb")
@@ -101,6 +105,9 @@
 ; open queries in separate buffer
 (setq erc-auto-query 'bury)
 
+; scroll by lines
+(add-hook 'erc-mode-hook (lambda () (setq scroll-conservatively 100000)))
+
 ; open notices in query buffers
 (add-hook 'erc-after-connect
               (lambda (server nick)
@@ -117,8 +124,8 @@
     ad-do-it))
 
 ; put input line at the bottom of the window
+(erc-scrolltobottom-enable)
 (setq erc-input-line-position -2)
-(erc-scrolltobottom-disable)
 
 ; reset chan tracking when I do not care
 (defun reset-erc-track-mode ()
@@ -130,16 +137,19 @@
 ; irc servers
 (setq erc-autojoin-channels-alist
           '(("freenode.net" "#anaconda" "#fedora")
+            ("irc.devel.redhat.com" "#brno" "#devel" "#jerevan" "#dup" "#anaconda")
             ("irc.gts.sk" "#fit07")
 ))
 
-(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
-(erc :server "irc.gts.sk" :port 6667 :nick "MarSik")
+(erc :server "irc.freenode.net" :port 6667 :nick "msivak" :password "jsMS")
+(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
+;(erc :server "us.ircnet.org" :port 6667 :nick "MarSik")
 
 ;
 ; Notifications
 ;
 
+; channel message
 (require 'notify)
 (defun erc-global-notify (match-type nickuserhost message)
   "Notify when a message is recieved."
@@ -155,8 +165,47 @@
 
 (add-hook 'erc-text-matched-hook 'erc-global-notify)
 
+; query
+(defun ms-erc-privmsg-notify (proc res)
+  (let (
+        (channel-buffers (erc-channel-list proc))
+        (target-channel-name (car (erc-response.command-args res)))
+       )
+    (unless (member (get-buffer target-channel-name) channel-buffers)
+      (erc-global-notify nil (erc-response.sender res) (erc-response.contents res))
+    )
+  )
+  nil
+)
+
+;(add-hook 'erc-server-PRIVMSG-functions 'ms-erc-privmsg-notify)
+
+
 ;(setq notify-method 'notify-via-libnotify)
 
+
+;
+; Message sending
+;
+
+; close buffer when message is sent
+(setq message-kill-buffer-on-exit t)
+
+; configure smtp server
+(setq smtpmail-smtp-server "smtp.corp.redhat.com"
+      message-send-mail-function 'message-smtpmail-send-it)
+
+; notmuch message reading/filtering system
+(require 'notmuch)
+
+; keystrokes for notmuch
+(define-key notmuch-show-mode-map "S"
+  (lambda ()
+    "mark message as spam"
+    (interactive)
+    (notmuch-show-tag-message "+spam" "-inbox")
+    )
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Libraries to autoload
@@ -165,10 +214,52 @@
 (load-library "ryan-functions")
 
 ;;
-;; Bookmarks
+;; AsciiDoc
 ;;
 
-(load-library "ms-bookmarks")
+(autoload 'adoc-mode "adoc-mode")
+
+
+;;
+;; Bookmarks
+;;
+;; Make sure the repository is loaded as early as possible
+(setq bm-restore-repository-on-load t)
+(setq-default bm-buffer-persistence t)
+
+(require 'bm)
+
+(global-set-key (kbd "<f2>") 'bm-toggle)
+(global-set-key (kbd "ESC <f3>") 'bm-next)
+(global-set-key (kbd "ESC <f2>") 'bm-previous)
+
+(setq bm-marker 'bm-marker-right)
+(setq bm-repository-file "~/.emacs.d/bm-repository.txt")
+
+;; Loading the repository from file when on start up.
+(add-hook' after-init-hook 'bm-repository-load)
+
+;; Restoring bookmarks when on file find.
+(add-hook 'find-file-hooks 'bm-buffer-restore)
+
+;; Saving bookmark data on killing a buffer
+(add-hook 'kill-buffer-hook 'bm-buffer-save)
+
+;; Saving the repository to file when on exit.
+;; kill-buffer-hook is not called when Emacs is killed, so we
+;; must save all bookmarks first.
+(add-hook 'kill-emacs-hook '(lambda nil
+           (bm-buffer-save-all)
+           (bm-repository-save)))
+
+;; Update bookmark repository when saving the file.
+(add-hook 'after-save-hook 'bm-buffer-save)
+
+;; Restore bookmarks when buffer is reverted.
+(add-hook 'after-revert-hook 'bm-buffer-restore)
+
+;; make sure bookmarks is saved before check-in (and revert-buffer)
+(add-hook 'vc-before-checkin-hook 'bm-buffer-save)
 
 
 ;;
@@ -184,7 +275,13 @@
 
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas/initialize)
+
+;; Develop and keep personal snippets under ~/emacs.d/mysnippets
+(setq yas/root-directory "~/emacs.d/snippets")
+
+;; Load the snippets
 (yas/load-directory "~/.emacs.d/yasnippet/snippets")
+(yas/load-directory yas/root-directory)
 
 ;;
 ;;Erlang mode
@@ -201,7 +298,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Python mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-library "ryan-python")
+(load-library "ms-python")
 
 ;;
 ;OrgMode
@@ -212,7 +309,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;NXML mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-library "ryan-nxml")
+(add-to-list 'auto-mode-alist
+             (cons (concat "\\." (regexp-opt '("xml" "xsd" "sch" "rng" "xslt" "svg" "rss" "xhtml") t) "\\'")
+                   'nxml-mode))
+
+(fset 'xml-mode 'nxml-mode)
+
 
 ;;
 ;;NxHTML
@@ -222,15 +324,116 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Abbrev mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-library "ryan-abbrev")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;Shell mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-library "ryan-shell")
+(add-to-list 'load-path "~/.emacs.d/predictive")
+(autoload 'predictive-mode "predictive" "predictive" t)
+(set-default 'predictive-auto-add-to-dict t)
+(setq predictive-main-dict 'rpg-dictionary
+      predictive-auto-learn t
+      predictive-add-to-dict-ask nil
+      predictive-use-auto-learn-cache nil
+      predictive-which-dict t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Misc
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-library "ryan-misc")
+;; Use "y or n" answers instead of full words "yes or no"
+(fset 'yes-or-no-p 'y-or-n-p)
 
+;Reload .emacs on the fly
+(defun reload-dot-emacs()
+  (interactive)
+  (if(bufferp (get-file-buffer ".emacs"))
+      (save-buffer(get-buffer ".emacs")))
+  (load-file "~/.emacs")
+  (message ".emacs reloaded successfully"))
+
+;;Place all backup copies of files in a common location
+(defconst use-backup-dir t)
+(setq backup-directory-alist (quote ((".*" . "~/.emacs.d/backup/")))
+      version-control t                ; Use version numbers for backups
+      kept-new-versions 16             ; Number of newest versions to keep
+      kept-old-versions 2              ; Number of oldest versions to keep
+      delete-old-versions t            ; Ask to delete excess backup versions?
+      backup-by-copying-when-linked t) ; Copy linked files, don't rename.
+
+;;Place autosave files in a common location
+(defvar autosave-dir
+ (concat "~" (user-login-name) "/.emacs.d/autosave/"))
+
+(setq auto-save-file-name-transforms
+      `(("\\(?:[^/]*/\\)*\\(.*\\)", (concat autosave-dir "\\1") t))
+)
+
+;Never put tabs in files, use spaces instead
+;Note: Use C-q C-i to put a real tab should the need ever arise.
+(setq-default indent-tabs-mode nil)
+
+;;Allow fetching files from HTTP servers
+(url-handler-mode)
+
+;;TRAMP should default to ssh
+(setq tramp-default-method "ssh")
+
+;;; Copy thing-at-point intelligently
+(defun sdl-kill-ring-save-thing-at-point (&optional n)
+  "Save THING at point to kill-ring."
+  (interactive "p")
+  (let ((things '((?l . list) (?f . filename) (?w . word) (?s . sexp)))
+        (message-log-max)               ; don't write to *Message*
+        beg t-a-p thing event)
+    (flet ((get-thing ()
+                      (save-excursion
+                        (beginning-of-thing thing)
+                        (setq beg (point))
+                        (if (= n 1)
+                            (end-of-thing thing)
+                          (forward-thing thing n))
+                        (buffer-substring beg (point)))))
+      ;; try detecting url email and fall back to 'line'
+      (dolist (thing '(url email line))
+        (when (bounds-of-thing-at-point thing)
+          (setq t-a-p (get-thing))
+          ;; remove the last newline character
+          (when (and (eq thing 'line)
+                     (>= (length t-a-p) 1)
+                     (equal (substring t-a-p -1) "\n"))
+            (setq t-a-p (substring t-a-p 0 -1)))
+          (kill-new t-a-p)
+          (message "%s" t-a-p)
+          (return nil)))
+      (setq event (read-event nil))
+      (when (setq thing (cdr (assoc event things)))
+        (clear-this-command-keys t)
+        (if (not (bounds-of-thing-at-point thing))
+            (message "No %s at point" thing)
+          (setq t-a-p (get-thing))
+          (kill-new t-a-p 'replace)
+          (message "%s" t-a-p))
+        (setq last-input-event nil))
+      (when last-input-event
+        (clear-this-command-keys t)
+        (setq unread-command-events (list last-input-event))))))
+
+(defun sdl-kill-ring-save-dwim ()
+  "This command dwim on saving text.
+
+If region is active, call `kill-ring-save'. Else, call
+`sdl-kill-ring-save-thing-at-point'.
+
+This command is to be used interactively."
+  (interactive)
+  (if (use-region-p)
+      (call-interactively 'kill-ring-save)
+    (call-interactively 'sdl-kill-ring-save-thing-at-point)))
+
+(global-set-key (kbd "M-w") 'sdl-kill-ring-save-dwim)
+
+;;
+;; C-x k in server mode kills the buffer using the "server way" (C-x #)
+;;
+
+(add-hook 'server-switch-hook
+          (lambda ()
+            (when (current-local-map)
+              (use-local-map (copy-keymap (current-local-map))))
+            (local-set-key (kbd "C-x k") 'server-edit)))
