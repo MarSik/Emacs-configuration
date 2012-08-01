@@ -45,6 +45,6 @@
 				     (match-end 0))))))
       imports)))
 
-(define-key py-mode-map "\M-\C-i"  'py-complete)
+(define-key python-mode-map "\M-\C-i"  'py-complete)
 
 (provide 'pycomplete)
