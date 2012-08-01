@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: :raises documentation
+# key: :raises
+# condition: 'force-in-comment
+# expand-env: ((some-var some-value))
+# --
+:raises ${1:exception}: ${2:description}
