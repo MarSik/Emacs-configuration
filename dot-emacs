@@ -275,7 +275,7 @@
 (yas/initialize)
 
 ;; Develop and keep personal snippets under ~/emacs.d/mysnippets
-(setq yas/root-directory "~/emacs.d/snippets")
+(setq yas/root-directory "~/.emacs.d/snippets")
 
 ;; Load the snippets
 (yas/load-directory "~/.emacs.d/yasnippet/snippets")
