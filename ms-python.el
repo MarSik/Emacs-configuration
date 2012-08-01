@@ -6,17 +6,17 @@
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (setq interpreter-mode-alist
       (cons '("python" . python-mode)
-	    interpreter-mode-alist)
+            interpreter-mode-alist)
       python-mode-hook
       '(lambda () (progn
-		    (set-variable 'py-indent-offset 4)
-		    (set-variable 'py-smart-indentation nil)
-		    (set-variable 'indent-tabs-mode nil) 
-		    ;;(highlight-beyond-fill-column)
+                    (set-variable 'py-indent-offset 4)
+                    (set-variable 'py-smart-indentation nil)
+                    (set-variable 'indent-tabs-mode nil)
+                    ;;(highlight-beyond-fill-column)
                     (define-key python-mode-map "\C-m" 'newline-and-indent)
-		    (pabbrev-mode)
-		    (abbrev-mode)
-	 )
+                    (abbrev-mode)
+                    (yas/advise-indent-function 'indent-for-tab-command)
+                    )
       )
 )
 

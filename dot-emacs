@@ -281,6 +281,20 @@
 (yas/load-directory "~/.emacs.d/yasnippet/snippets")
 (yas/load-directory yas/root-directory)
 
+;; try expanding yasnippet first on TAB
+(defun yas/advise-indent-function (function-symbol)
+  (eval `(defadvice ,function-symbol (around yas/try-expand-first activate)
+           ,(format
+             "Try to expand a snippet before point, then call `%s' as usual"
+             function-symbol)
+           (let ((yas/fallback-behavior nil))
+             (unless (and (interactive-p)
+                          (yas/expand))
+               ad-do-it)))))
+
+;to use it, execute the following line in Python and C mode (or all..)
+;(yas/advise-indent-function 'indent-for-tab-command)
+
 ;;
 ;;Erlang mode
 ;;
@@ -323,7 +337,7 @@
 ;;Abbrev mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path "~/.emacs.d/predictive")
-(autoload 'predictive-mode "predictive" "predictive" t)
+;(autoload 'predictive-mode "predictive" "predictive" t)
 (set-default 'predictive-auto-add-to-dict t)
 (setq predictive-main-dict 'rpg-dictionary
       predictive-auto-learn t
