@@ -211,8 +211,6 @@
 ;;Libraries to autoload
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(load-library "ryan-functions")
-
 ;;
 ;; AsciiDoc
 ;;
