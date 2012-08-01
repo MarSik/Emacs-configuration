@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# name: :param
+# name: :param documentation
 # key: :param
+# condition: 'force-in-comment
 # contributor: Martin Sivak
 # --
 :param ${1:name}: ${2:description}

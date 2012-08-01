@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: :return documentation
+# key: :return
+# condition: 'force-in-comment
+# --
+:return: ${1:description}
+:rtype: ${2:type}
