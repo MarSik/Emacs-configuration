@@ -142,8 +142,8 @@
             ("irc.gts.sk" "#fit07")
 ))
 
-(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
-(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
+;(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
+;(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
 ;(erc :server "us.ircnet.org" :port 6667 :nick "MarSik")
 
 ;
@@ -151,6 +151,7 @@
 ;
 
 ; channel message
+(setq notify-method 'notify-via-growl)
 (require 'notify)
 (defun erc-global-notify (match-type nickuserhost message)
   "Notify when a message is recieved."
@@ -182,7 +183,6 @@
 ;(add-hook 'erc-server-PRIVMSG-functions 'ms-erc-privmsg-notify)
 
 
-;(setq notify-method 'notify-via-libnotify)
 
 
 ;
@@ -197,16 +197,16 @@
       message-send-mail-function 'message-smtpmail-send-it)
 
 ; notmuch message reading/filtering system
-(require 'notmuch)
+;(require 'notmuch)
 
 ; keystrokes for notmuch
-(define-key notmuch-show-mode-map "S"
-  (lambda ()
-    "mark message as spam"
-    (interactive)
-    (notmuch-show-tag-message "+spam" "-inbox")
-    )
-  )
+;(define-key notmuch-show-mode-map "S"
+;  (lambda ()
+;    "mark message as spam"
+;    (interactive)
+;    (notmuch-show-tag-message "+spam" "-inbox")
+;    )
+;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Libraries to autoload
@@ -314,8 +314,8 @@
 ;;
 ;Ledger
 ;;
-(setq load-path (cons "~/.emacs.d/ledger/lisp" load-path))
-(load-library "ledger")
+;(setq load-path (cons "~/.emacs.d/ledger/lisp" load-path))
+;(load-library "ledger")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
