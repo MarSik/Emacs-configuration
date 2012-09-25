@@ -1,0 +1,4 @@
+#!/bin/bash
+epylint "$1" 2>/dev/null
+true
+
