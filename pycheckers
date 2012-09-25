@@ -1,4 +1,4 @@
 #!/bin/bash
-epylint "$1" 2>/dev/null
+$HOME/.emacs.d/epylint.py "$1" 2>/dev/null
 true
 
