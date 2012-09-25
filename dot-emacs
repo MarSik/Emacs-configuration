@@ -104,6 +104,7 @@
 (add-to-list 'load-path "~/.emacs.d/emacs-flymake")
 (require 'flymake)
 (setq flymake-run-in-place nil)
+(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 (when (load "flymake" t)
   (defun flymake-pyflakes-init ()
