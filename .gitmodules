@@ -4,3 +4,9 @@
 [submodule "yasnippet-0.6.1c/snippets/text-mode/latex-mode"]
 	path = yasnippet-0.6.1c/snippets/text-mode/latex-mode
 	url = git://github.com/madsdk/yasnippets-latex.git
+[submodule "emacs-flymake-cursor"]
+	path = emacs-flymake-cursor
+	url = git://github.com/illusori/emacs-flymake-cursor.git
+[submodule "emacs-flymake"]
+	path = emacs-flymake
+	url = git://github.com/illusori/emacs-flymake.git
