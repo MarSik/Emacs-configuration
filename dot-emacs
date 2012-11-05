@@ -26,6 +26,11 @@
 (setq default-buffer-file-coding-system 'utf-8)
 
 ;;
+;; Fix for LaTeX verbatim in emacs (rhbz#684797)
+(custom-set-faces
+  '(tex-verbatim ((t (:foundry "courier" :family "*")))))
+
+;;
 ;; IDE
 ;;
 
