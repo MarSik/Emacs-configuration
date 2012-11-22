@@ -58,7 +58,7 @@ def lint(filename):
         parentPath = os.path.dirname(parentPath)
 
     # Start pylint
-    process = Popen('pylint -f parseable -r n --disable=I "%s"' %
+    process = Popen('pylint -f parseable --include-ids=y -r n --disable=I "%s"' %
                     childPath, shell=True, stdout=PIPE, stderr=PIPE,
                     cwd=parentPath)
     p = process.stdout
