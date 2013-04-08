@@ -220,14 +220,14 @@
 
 ; irc servers
 (setq erc-autojoin-channels-alist
-          '(("freenode.net" "#anaconda" "#fedora")
-            ("irc.devel.redhat.com" "#brno" "#devel" "#jerevan" "#dup" "#anaconda")
-            ("irc.gts.sk" "#fit07")
+          '(("freenode.net" "#fedora" "#fit07")
+            ("irc.devel.redhat.com" "#brno" "#tlv" "#devel" "#jerevan" "#rhev" "#brno-catacombs")
+            ("irc.oftc.net" "#ovirt")
 ))
 
-(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
-(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
-;(erc :server "us.ircnet.org" :port 6667 :nick "MarSik")
+;(erc :server "irc.freenode.net" :port 6667 :nick "msivak")
+;(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
+;(erc :server "irc.oftc.net" :port 6667 :nick "msivak")
 
 ;
 ; Notifications
