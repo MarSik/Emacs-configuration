@@ -1,6 +1,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Library Paths
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Show stack traces on error
+(setq stack-trace-on-error t)
+
+; Load CEDET Devel with it's very fresh eieio
+(load-file "~/.emacs.d/cedet-bzr/trunk/cedet-devel-load.el")
+
+; Setup my configuration directory
 (add-to-list 'load-path "~/.emacs.d")
 (progn (cd "~/.emacs.d") (normal-top-level-add-subdirs-to-load-path))
 
@@ -34,24 +42,75 @@
 ;; IDE
 ;;
 
+; Auto complete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "/home/msivak/.emacs.d//ac-dict")
+(ac-config-default)
+
+; CEDET
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
+
+;; Activate semantic
+(semantic-mode 1)
+
+(require 'semantic/ia)
+(require 'semantic/bovine/c)
+(require 'semantic/bovine/clang)
+
+(require 'cedet-files)
+
+;; loading contrib...
+(require 'eassist)
+
+;; SRecode
+(global-srecode-minor-mode 1)
+
+;; EDE
+(global-ede-mode 1)
+(ede-enable-generic-projects)
+
+;; Setup JAVA....
+(require 'semantic/db-javap)
+
+;; if you want to enable support for gnu global
+(when (cedet-gnu-global-version-check t)
+  (semanticdb-enable-gnu-global-databases 'c-mode)
+  (semanticdb-enable-gnu-global-databases 'c++-mode))
+
+;; enable ctags for some languages:
+;;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
+(when (cedet-ectag-version-check)
+  (semantic-load-enable-primary-exuberent-ctags-support))
+
+(defun my-cedet-hook ()
+  ; (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+  (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
+  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
+  (local-set-key (kbd "\C-xj") 'semantic-ia-fast-jump)
+  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-semantic)
+  (local-set-key [(control return)] 'auto-complete)
+)
+
+(add-hook 'c-mode-common-hook 'my-cedet-hook)
+(add-hook 'java-mode-hook 'my-cedet-hook)
+(add-hook 'erlang-mode-hook 'my-cedet-hook)
+(add-hook 'python-mode-hook 'my-cedet-hook)
+
 ; File annotations
 ;(require 'org-annotate-file)
 ;(global-set-key (kbd "C-c C-l") 'org-annotate-file)
 
-; CEDET
-;(load "~/.emacs.d/cedet/common/cedet.el")
-;(require 'semantic)
-;(require 'semantic-gcc)
-;(require 'semantic-ia)
-;(global-ede-mode 1)                      ; Enable the Project management system
-;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion
-;(global-srecode-minor-mode 1)            ; Enable template insertion menu
-;(global-semanticdb-minor-mode 1)
-;(semantic-load-enable-code-helpers)
-;;(semantic-load-enable-primary-exuberent-ctags-support)
-;;(semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
-;;(setq-mode-local c-mode semanticdb-find-default-throttle
-;;                 '(project unloaded system recursive))
 
 ; Emacs Code Browser
 (add-to-list 'load-path "~/.emacs.d/ecb")
