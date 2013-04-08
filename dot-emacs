@@ -526,4 +526,8 @@ This command is to be used interactively."
           (lambda ()
             (when (current-local-map)
               (use-local-map (copy-keymap (current-local-map))))
-            (local-set-key (kbd "C-x k") 'server-edit)))
+            (local-set-key (kbd "C-x k") '(lambda ()
+                                            (interactive)
+                                            (if server-buffer-clients
+                                                (server-edit)
+                                              (kill-this-buffer))))))
