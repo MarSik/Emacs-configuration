@@ -7,3 +7,6 @@
 [submodule "emacs-flymake"]
 	path = emacs-flymake
 	url = git://github.com/illusori/emacs-flymake.git
+[submodule "ecb"]
+	path = ecb
+	url = https://github.com/alexott/ecb.git
