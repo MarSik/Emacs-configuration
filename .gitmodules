@@ -13,3 +13,6 @@
 [submodule "ecb"]
 	path = ecb
 	url = https://github.com/alexott/ecb.git
+[submodule "emacs-eclim"]
+	path = emacs-eclim
+	url = git://github.com/senny/emacs-eclim.git
