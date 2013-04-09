@@ -80,10 +80,36 @@
 ;; Setup JAVA....
 (require 'semantic/db-javap)
 
+;; Setup Eclipse bindings
+;; requires Eclipse with m2e plugin (Maven support)
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-eclim/"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-eclim/vendor"))
+(require 'eclim)
+(require 'eclimd)
+(global-eclim-mode)
+
+(setq eclim-auto-save t
+      eclim-executable "/usr/lib64/eclipse/eclim"
+      eclimd-executable "/usr/lib64/eclipse/eclimd"
+      eclimd-wait-for-process t
+      eclimd-default-workspace "~/Work/"
+      help-at-pt-display-when-idle t
+      help-at-pt-timer-delay 0.1
+      ac-delay 0.5
+      )
+
+;; Call the help framework with the settings above & activate
+;; eclim-mode
+(help-at-pt-set-timer)
+
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
 ;; if you want to enable support for gnu global
 (when (cedet-gnu-global-version-check t)
   (semanticdb-enable-gnu-global-databases 'c-mode)
-  (semanticdb-enable-gnu-global-databases 'c++-mode))
+  (semanticdb-enable-gnu-global-databases 'c++-mode)
+  (semanticdb-enable-gnu-global-databases 'java-mode))
 
 ;; enable ctags for some languages:
 ;;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
@@ -101,8 +127,20 @@
   (local-set-key [(control return)] 'auto-complete)
 )
 
+(defun my-java-cedet-hook ()
+  (local-set-key (kbd "\C-c?") 'eclim-java-show-documentation-for-current-element)
+  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
+  (local-set-key (kbd "\C-cH") 'eclim-java-hierarchy)
+  (local-set-key (kbd "\C-cI") 'eclim-java-import-organize)
+  (local-set-key (kbd "\C-xj") 'eclim-java-find-declaration)
+  (local-set-key (kbd "\C-c \C-r") 'eclim-java-find-references)
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-semantic)
+  (local-set-key [(control return)] 'auto-complete)
+)
+
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'java-mode-hook 'my-cedet-hook)
+(add-hook 'java-mode-hook 'my-java-cedet-hook)
 (add-hook 'erlang-mode-hook 'my-cedet-hook)
 (add-hook 'python-mode-hook 'my-cedet-hook)
 
