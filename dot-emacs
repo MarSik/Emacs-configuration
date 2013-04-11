@@ -91,7 +91,7 @@
 (setq eclim-auto-save t
       eclim-executable "/usr/lib64/eclipse/eclim"
       eclimd-executable "/usr/lib64/eclipse/eclimd"
-      eclimd-wait-for-process t
+      eclimd-wait-for-process nil
       eclimd-default-workspace "~/Work/"
       help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.1
@@ -134,15 +134,14 @@
   (local-set-key (kbd "\C-cI") 'eclim-java-import-organize)
   (local-set-key (kbd "\C-xj") 'eclim-java-find-declaration)
   (local-set-key (kbd "\C-c \C-r") 'eclim-java-find-references)
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic)
+  ;(add-to-list 'ac-sources 'ac-source-gtags)
+  ;(add-to-list 'ac-sources 'ac-source-semantic)
   (local-set-key [(control return)] 'auto-complete)
 )
 
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 (add-hook 'java-mode-hook 'my-java-cedet-hook)
 (add-hook 'erlang-mode-hook 'my-cedet-hook)
-(add-hook 'python-mode-hook 'my-cedet-hook)
 
 ; File annotations
 ;(require 'org-annotate-file)
@@ -218,6 +217,8 @@
       (list "~/.emacs.d/pycheckers"  (list local-file))))
    (add-to-list 'flymake-allowed-file-name-masks
              '("\\.py\\'" flymake-pyflakes-init)))
+
+(require 'flymake-eclim-java)
 
 ;;;
 ;;; IRC client

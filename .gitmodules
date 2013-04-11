@@ -16,3 +16,15 @@
 [submodule "emacs-eclim"]
 	path = emacs-eclim
 	url = git://github.com/senny/emacs-eclim.git
+[submodule "emacs-epc"]
+	path = emacs-epc
+	url = git://github.com/kiwanami/emacs-epc.git
+[submodule "emacs-deferred"]
+	path = emacs-deferred
+	url = git://github.com/kiwanami/emacs-deferred.git
+[submodule "emacs-ctable"]
+	path = emacs-ctable
+	url = git://github.com/kiwanami/emacs-ctable.git
+[submodule "emacs-jedi"]
+	path = emacs-jedi
+	url = git://github.com/tkf/emacs-jedi.git
