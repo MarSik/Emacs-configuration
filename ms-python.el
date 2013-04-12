@@ -10,8 +10,9 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-epc/"))
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-jedi/"))
 
-;(setq 'jedi:complete-on-dot t)
-(autoload 'jedi:setup "jedi" nil t)
+(require 'jedi)
+(setq jedi:complete-on-dot t)
+(setq jedi:server-command (list "python" jedi:server-script))
 
 (defun ms-python-hook ()
   (setq python-indent-offset 4)
