@@ -5,6 +5,11 @@
 ; Show stack traces on error
 (setq stack-trace-on-error t)
 
+; Save history of my minibuffer
+(savehist-mode 1)
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(setq savehist-file "~/.emacs.d/.history")
+
 ; Load CEDET Devel with it's very fresh eieio
 (load-file "~/.emacs.d/cedet-bzr/trunk/cedet-devel-load.el")
 
@@ -41,15 +46,42 @@
 ;; IDE
 ;;
 
-; Auto complete
+;;
+;; Snippets
+;;
+
+(require 'yasnippet) ;; not yasnippet-bundle
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "/home/msivak/.emacs.d//ac-dict")
+
+;; Yasnippet
+(setq yas/trigger-key (kbd "C-c kp-divide")) ;; I will trigger it using auto-complete
+(yas/global-mode 1)
+(yas/initialize)
+
+;; Develop and keep personal snippets under ~/emacs.d/mysnippets
+(setq yas/root-directory "~/.emacs.d/snippets")
+
+;; Load the snippets
+(yas/load-directory "~/.emacs.d/yasnippet/snippets")
+(yas/load-directory yas/root-directory)
+
+;; Let me use some snippets in comments too
+(add-hook 'python-mode-hook
+          '(lambda ()
+             (setq yas/buffer-local-condition
+                   '(if (python-in-string/comment)
+                        '(require-snippet-condition . force-in-comment)
+                      t))))
+
+; Auto complete
+(add-to-list 'ac-dictionary-directories "/home/msivak/.emacs.d/ac-dict")
+(add-to-list 'ac-modes 'sql-mode)
+(add-to-list 'ac-modes 'verilog-mode)
 (ac-config-default)
 
 ; CEDET
 (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
 ;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
 (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
@@ -58,27 +90,26 @@
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
 
-;; Activate semantic
-(semantic-mode 1)
+;; Activate semantic only in specific modes
+;; (semantic-mode 1)
 
 (require 'semantic/ia)
 (require 'semantic/bovine/c)
 (require 'semantic/bovine/clang)
-
 (require 'cedet-files)
 
 ;; loading contrib...
-(require 'eassist)
+;(require 'eassist)
 
 ;; SRecode
-(global-srecode-minor-mode 1)
+(global-srecode-minor-mode 0)
 
 ;; EDE
-(global-ede-mode 1)
+(global-ede-mode 0)
 (ede-enable-generic-projects)
 
-;; Setup JAVA....
-(require 'semantic/db-javap)
+;; Do not use CEDET java, eclim is much faster....
+;; (require 'semantic/db-javap)
 
 ;; Setup Eclipse bindings
 ;; requires Eclipse with m2e plugin (Maven support)
@@ -93,55 +124,74 @@
       eclimd-executable "/usr/lib64/eclipse/eclimd"
       eclimd-wait-for-process nil
       eclimd-default-workspace "~/Work/"
-      help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.1
-      ac-delay 0.5
+      help-at-pt-display-when-idle 'never
+      help-at-pt-timer-delay 0.3
+      ac-delay 0.1
+      eclim-use-yasnippet nil
       )
 
 ;; Call the help framework with the settings above & activate
 ;; eclim-mode
+
+;; disable help-at-pt as it breaks my buffers..
 (help-at-pt-set-timer)
 
 (require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
+; (ac-emacs-eclim-config) - use ac-source-emacs-eclim
+
+;; Setup verilog
+(autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
+(add-to-list 'auto-mode-alist '("\\.[ds]?vh?\\'" . verilog-mode))
 
 ;; if you want to enable support for gnu global
 (when (cedet-gnu-global-version-check t)
   (semanticdb-enable-gnu-global-databases 'c-mode)
   (semanticdb-enable-gnu-global-databases 'c++-mode)
-  (semanticdb-enable-gnu-global-databases 'java-mode))
+)
 
-;; enable ctags for some languages:
-;;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
+; enable ctags for some languages:
+;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
 (when (cedet-ectag-version-check)
   (semantic-load-enable-primary-exuberent-ctags-support))
 
+(defun my-ac-hook ()
+  (local-set-key [(control return)] 'auto-complete)
+)
+
 (defun my-cedet-hook ()
-  ; (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+  (semantic-mode 1)
   (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
   (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
   (local-set-key (kbd "\C-xj") 'semantic-ia-fast-jump)
   (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
-  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
   (add-to-list 'ac-sources 'ac-source-semantic)
+  (add-to-list 'ac-sources 'ac-source-gtags)
   (local-set-key [(control return)] 'auto-complete)
 )
 
 (defun my-java-cedet-hook ()
+  (setq ac-sources '(ac-source-yasnippet
+                     ac-source-emacs-eclim
+                     ac-source-features
+                     ac-source-abbrev
+                     ))
+
   (local-set-key (kbd "\C-c?") 'eclim-java-show-documentation-for-current-element)
-  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
   (local-set-key (kbd "\C-cH") 'eclim-java-hierarchy)
   (local-set-key (kbd "\C-cI") 'eclim-java-import-organize)
   (local-set-key (kbd "\C-xj") 'eclim-java-find-declaration)
   (local-set-key (kbd "\C-c \C-r") 'eclim-java-find-references)
-  ;(add-to-list 'ac-sources 'ac-source-gtags)
-  ;(add-to-list 'ac-sources 'ac-source-semantic)
   (local-set-key [(control return)] 'auto-complete)
 )
 
-(add-hook 'c-mode-common-hook 'my-cedet-hook)
+(add-hook 'c-mode-hook 'my-cedet-hook)
+(add-hook 'c++-mode-hook 'my-cedet-hook)
 (add-hook 'java-mode-hook 'my-java-cedet-hook)
 (add-hook 'erlang-mode-hook 'my-cedet-hook)
+(add-hook 'verilog-mode-hook 'my-cedet-hook)
+(add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
+(add-hook 'sql-mode-hook 'my-ac-hook)
 
 ; File annotations
 ;(require 'org-annotate-file)
@@ -391,28 +441,6 @@
 (epa-file-enable)
 
 ;;
-;; Snippets
-;;
-
-(require 'yasnippet) ;; not yasnippet-bundle
-(yas/initialize)
-
-;; Develop and keep personal snippets under ~/emacs.d/mysnippets
-(setq yas/root-directory "~/.emacs.d/snippets")
-
-;; Load the snippets
-(yas/load-directory "~/.emacs.d/yasnippet/snippets")
-(yas/load-directory yas/root-directory)
-
-;; Let me use some snippets in comments too
-(add-hook 'python-mode-hook
-          '(lambda ()
-             (setq yas/buffer-local-condition
-                   '(if (python-in-string/comment)
-                        '(require-snippet-condition . force-in-comment)
-                      t))))
-
-;;
 ;;Erlang mode
 ;;
 
@@ -453,14 +481,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Abbrev mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'load-path "~/.emacs.d/predictive")
+;(add-to-list 'load-path "~/.emacs.d/predictive")
 ;(autoload 'predictive-mode "predictive" "predictive" t)
-(set-default 'predictive-auto-add-to-dict t)
-(setq predictive-main-dict 'rpg-dictionary
-      predictive-auto-learn t
-      predictive-add-to-dict-ask nil
-      predictive-use-auto-learn-cache nil
-      predictive-which-dict t)
+;(set-default 'predictive-auto-add-to-dict t)
+;(setq predictive-main-dict 'rpg-dictionary
+;      predictive-auto-learn t
+;      predictive-add-to-dict-ask nil
+;      predictive-use-auto-learn-cache nil
+;      predictive-which-dict t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Misc
