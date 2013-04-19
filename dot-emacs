@@ -10,9 +10,6 @@
 (setq savehist-additional-variables '(search-ring regexp-search-ring))
 (setq savehist-file "~/.emacs.d/.history")
 
-; Load CEDET Devel with it's very fresh eieio
-(load-file "~/.emacs.d/cedet-bzr/trunk/cedet-devel-load.el")
-
 ; Setup my configuration directory
 (add-to-list 'load-path "~/.emacs.d")
 (progn (cd "~/.emacs.d") (normal-top-level-add-subdirs-to-load-path))
@@ -117,38 +114,7 @@
 (setq ac-use-menu-map t)
 (define-key ac-menu-map "\C-m" 'ac-complete)
 
-; CEDET
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
-
-;; Activate semantic only in specific modes
-;; (semantic-mode 1)
-
-(require 'semantic/ia)
-(require 'semantic/bovine/c)
-(require 'semantic/bovine/clang)
-(require 'cedet-files)
-
-;; loading contrib...
-;(require 'eassist)
-
-;; SRecode
-(global-srecode-minor-mode 0)
-
-;; EDE
-(global-ede-mode 0)
-(ede-enable-generic-projects)
-
-;; Do not use CEDET java, eclim is much faster....
-;; (require 'semantic/db-javap)
-
+;;
 ;; Setup Eclipse bindings
 ;; requires Eclipse with m2e plugin (Maven support)
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-eclim/"))
@@ -158,19 +124,21 @@
 (global-eclim-mode)
 
 (setq eclim-auto-save t
+      eclim-print-debug-messages t
+      eclim-use-yasnippet nil
+
       eclim-executable "/usr/lib64/eclipse/eclim"
       eclimd-executable "/usr/lib64/eclipse/eclimd"
       eclimd-wait-for-process nil
       eclimd-default-workspace "~/Work/"
-      help-at-pt-display-when-idle 'never
+
+      help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.3
-      eclim-use-yasnippet nil
       )
 
 ;; Call the help framework with the settings above & activate
 ;; eclim-mode
 
-;; disable help-at-pt as it breaks my buffers..
 (help-at-pt-set-timer)
 
 (require 'ac-emacs-eclim-source)
@@ -180,29 +148,31 @@
 (autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
 (add-to-list 'auto-mode-alist '("\\.[ds]?vh?\\'" . verilog-mode))
 
-;; if you want to enable support for gnu global
-(when (cedet-gnu-global-version-check t)
-  (semanticdb-enable-gnu-global-databases 'c-mode)
-  (semanticdb-enable-gnu-global-databases 'c++-mode)
-)
-
-; enable ctags for some languages:
-;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
-(when (cedet-ectag-version-check)
-  (semantic-load-enable-primary-exuberent-ctags-support))
-
 (defun my-ac-hook ()
+  (make-local-variable 'ac-ignores)
+  (add-to-list 'ac-ignores ";")
+
   (local-set-key [(control return)] 'auto-complete)
 )
 
+(defun my-ruby-hook ()
+  (make-local-variable 'ac-ignores)
+  (add-to-list 'ac-ignores ";")
+
+  (local-set-key [(control return)] 'auto-complete)
+)
+
+
 (defun my-cedet-hook ()
-  (semantic-mode 1)
-  (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
-  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
-  (local-set-key (kbd "\C-xj") 'semantic-ia-fast-jump)
-  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
+  (make-local-variable 'ac-ignores)
+  (add-to-list 'ac-ignores ";")
+
+;  (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
+;  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
+  (local-set-key (kbd "\C-xj") 'find-function-at-point)
+;  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
   (add-to-list 'ac-sources 'ac-source-yasnippet)
-  (add-to-list 'ac-sources 'ac-source-semantic)
+;  (add-to-list 'ac-sources 'ac-source-semantic)
   (add-to-list 'ac-sources 'ac-source-gtags)
   (local-set-key [(control return)] 'auto-complete)
 )
@@ -210,14 +180,19 @@
 (defun my-java-cedet-hook ()
   (setq ac-sources '(ac-source-yasnippet
                      ac-source-emacs-eclim
+                     ac-source-dictionary
                      ac-source-features
                      ac-source-abbrev
                      ))
+
+  (make-local-variable 'ac-ignores)
+  (add-to-list 'ac-ignores ";")
 
   (local-set-key (kbd "\C-c?") 'eclim-java-show-documentation-for-current-element)
   (local-set-key (kbd "\C-cH") 'eclim-java-hierarchy)
   (local-set-key (kbd "\C-cI") 'eclim-java-import-organize)
   (local-set-key (kbd "\C-xj") 'eclim-java-find-declaration)
+  (local-set-key (kbd "\C-cs") 'eclim-java-find-simple)
   (local-set-key (kbd "\C-c \C-r") 'eclim-java-find-references)
   (local-set-key [(control return)] 'auto-complete)
 )
@@ -229,17 +204,12 @@
 (add-hook 'verilog-mode-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
 (add-hook 'sql-mode-hook 'my-ac-hook)
+(add-hook 'ruby-mode-hook 'my-ruby-hook)
 
 ; File annotations
 ;(require 'org-annotate-file)
 ;(global-set-key (kbd "C-c C-l") 'org-annotate-file)
 
-
-; Emacs Code Browser
-(add-to-list 'load-path "~/.emacs.d/ecb")
-(require 'ecb)
-;(require 'ecb-autoloads)
-;  - at some time must be then started using ecb-activate
 
 ;;
 ;; C indentation
@@ -351,7 +321,8 @@
             ("irc.oftc.net" "#ovirt")
 ))
 
-;(erc :server "irc.freenode.net" :port 6667 :nick "msivak" :password "jsMarSik")
+(require 'ms-conf)
+;(erc :server "irc.freenode.net" :port 6667 :nick "msivak" :password ms-conf-freenode-password)
 ;(erc :server "irc.devel.redhat.com" :port 6667 :nick "msivak")
 ;(erc :server "irc.oftc.net" :port 6667 :nick "msivak")
 
@@ -514,18 +485,6 @@
 ;;NxHTML
 ;;
 (load "~/.emacs.d/nxhtml/autostart.el")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;Abbrev mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(add-to-list 'load-path "~/.emacs.d/predictive")
-;(autoload 'predictive-mode "predictive" "predictive" t)
-;(set-default 'predictive-auto-add-to-dict t)
-;(setq predictive-main-dict 'rpg-dictionary
-;      predictive-auto-learn t
-;      predictive-add-to-dict-ask nil
-;      predictive-use-auto-learn-cache nil
-;      predictive-which-dict t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Misc

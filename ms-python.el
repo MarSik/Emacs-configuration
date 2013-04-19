@@ -26,6 +26,7 @@
   (jedi:setup)
   (setq ac-sources '(ac-source-yasnippet
                      ac-source-jedi-direct
+                     ac-source-dictionary
                      ac-source-features
                      ac-source-abbrev
                      ac-source-words-in-same-mode-buffers
@@ -41,8 +42,3 @@
 )
 
 (add-hook 'python-mode-hook 'ms-python-hook)
-
-;; pymacs
-;(require 'pymacs)
-;(pymacs-load "ropemacs" "rope-")
-;(setq ropemacs-enable-autoimport t)
