@@ -28,3 +28,6 @@
 [submodule "snippets/text-mode/java-mode"]
 	path = snippets/text-mode/java-mode
 	url = git://github.com/nekop/yasnippet-java-mode.git
+[submodule "auto-complete"]
+	path = auto-complete
+	url = git://github.com/auto-complete/auto-complete.git
