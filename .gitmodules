@@ -31,3 +31,6 @@
 [submodule "auto-complete"]
 	path = auto-complete
 	url = git://github.com/auto-complete/auto-complete.git
+[submodule "auto-complete-nxml"]
+	path = auto-complete-nxml
+	url = git://github.com/aki2o/auto-complete-nxml.git

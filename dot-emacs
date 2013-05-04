@@ -26,6 +26,36 @@
 (tool-bar-mode -1)
 (windmove-default-keybindings)
 
+;; Show nicer names when filenames match
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+
+(require 'ido)
+(setq ido-enable-flex-matching t
+      ido-everywhere t
+      ido-use-filename-at-point 'guess
+      ido-create-new-buffer 'always)
+(ido-mode 1)
+
+(require 'recentf)
+
+;; get rid of `find-file-read-only' and replace it with something
+;; more useful.
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+
+;; enable recent files mode.
+(recentf-mode t)
+
+; 50 files ought to be enough.
+(setq recentf-max-saved-items 50)
+
+(defun ido-recentf-open ()
+  "Use `ido-completing-read' to \\[find-file] a recent file"
+  (interactive)
+  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+    (message "Aborting")))
+
 ;;
 ;; Lang support
 ;;
