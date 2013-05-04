@@ -158,7 +158,6 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-eclim/vendor"))
 (require 'eclim)
 (require 'eclimd)
-(global-eclim-mode)
 
 (setq eclim-auto-save t
       eclim-print-debug-messages t
@@ -234,6 +233,8 @@
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
 
+  (eclim-mode)
+
   (local-set-key (kbd "\C-c?") 'eclim-java-show-documentation-for-current-element)
   (local-set-key (kbd "\C-cH") 'eclim-java-hierarchy)
   (local-set-key (kbd "\C-cI") 'eclim-java-import-organize)
@@ -290,6 +291,7 @@
 
 ;; nuke trailing whitespaces when writing to a file
 ;; activate minor whitespace mode
+;; do not use together with eclim auto save feature
 (add-hook 'write-file-hooks 'delete-trailing-whitespace)
 (mapc (lambda (hook)
         (add-hook hook 'whitespace-mode)
@@ -298,7 +300,6 @@
         emacs-lisp-mode-hook
         python-mode-hook
         js2-mode-hook
-        java-mode-hook
         )
 )
 
