@@ -13,6 +13,9 @@ popd
 # Setup Python environment
 sudo easy_install jedi epc
 
+# Seetup xml flymake
+yum install xmlstarlet
+
 # Setup java environment
 # install eclipse and m2e plugin
 git clone git://github.com/ervandew/eclim.git
