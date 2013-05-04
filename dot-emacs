@@ -131,12 +131,19 @@
       ac-auto-start 2
       ac-ignore-case 'smart
       ac-stop-flymake-on-completing t
-      ac-show-menu-immediately-on-auto-complete nil
+      ac-show-menu-immediately-on-auto-complete t
       ac-quick-help-prefer-x t
-      ac-candidate-limit 10
+      ac-candidate-limit nil
+      ac-candidate-menu-min 1
+      ac-dwim nil
+      ac-use-comphist t
+      ac-comphist-threshold 0.7
+      ac-use-fuzzy t
       )
 
 (ac-config-default)
+
+(global-set-key [(control return)] 'auto-complete)
 
 ; Disable enter as a completion key while in inline completion mode
 ; Stack overflow #12660428
@@ -181,6 +188,14 @@
 (defun my-ac-hook ()
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
+
+  (local-set-key [(control return)] 'auto-complete)
+)
+
+(defun my-nxml-hook ()
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
+  (auto-complete-nxml-hook)
 
   (local-set-key [(control return)] 'auto-complete)
 )
@@ -188,6 +203,7 @@
 (defun my-ruby-hook ()
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
 
   (local-set-key [(control return)] 'auto-complete)
 )
@@ -234,6 +250,7 @@
 (add-hook 'verilog-mode-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
 (add-hook 'sql-mode-hook 'my-ac-hook)
+(add-hook 'nxml-mode-hook 'my-nxml-hook)
 (add-hook 'ruby-mode-hook 'my-ruby-hook)
 
 ; File annotations
@@ -509,12 +526,21 @@
                    'nxml-mode))
 
 (fset 'xml-mode 'nxml-mode)
+(fset 'html-mode 'nxml-mode)
+(fset 'xhtml-mode 'nxml-mode)
 
+(autoload 'xml-mode "nxml" "XML editing mode" t)
+
+(eval-after-load 'rng-loc
+  '(add-to-list 'rng-schema-locating-files "~/.emacs.d/schema/schemas.xml"))
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete-nxml/"))
+(require 'auto-complete-nxml)
 
 ;;
 ;;NxHTML
 ;;
-(load "~/.emacs.d/nxhtml/autostart.el")
+;; (load "~/.emacs.d/nxhtml/autostart.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Misc
