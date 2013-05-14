@@ -324,8 +324,8 @@
             (file-name-directory buffer-file-name)))
        (python-path python-shell-extra-pythonpaths))
       (when (boundp 'python-path)
+        (message "Setting flymake PYTHONPATH to '%s'" (mapconcat 'identity python-path ":")))
         (setenv "PYTHONPATH" (mapconcat 'identity python-path ":"))
-        (message "Setting flymake PYTHONPATH to '%s'" python-path))
       (list "~/.emacs.d/pycheckers"  (list local-file))))
    (add-to-list 'flymake-allowed-file-name-masks
              '("\\.py\\'" flymake-pyflakes-init)))
