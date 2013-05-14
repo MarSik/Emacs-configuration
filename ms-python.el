@@ -21,7 +21,7 @@
   ;;(highlight-beyond-fill-column)
   (abbrev-mode)
   ;;(yas/advise-indent-function 'indent-for-tab-command)
-  (semantic-mode 1)
+  ;;(semantic-mode 1)
 
   (jedi:setup)
   (setq ac-sources '(ac-source-yasnippet
@@ -38,7 +38,6 @@
   (local-set-key (kbd "\C-xj") 'jedi:goto-definition)
   ;(add-to-list 'ac-sources 'ac-source-gtags)
   ;(add-to-list 'ac-sources 'ac-source-semantic)
-  (local-set-key [(control return)] 'auto-complete)
 )
 
 (add-hook 'python-mode-hook 'ms-python-hook)

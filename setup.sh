@@ -10,6 +10,9 @@ popd
 # I use my own flymake version
 # sudo rm -f /usr/share/emacs/24.*/lisp/progmodes/flymake.el*
 
+# I do not use cedet at all
+# sudo rm -rf /usr/share/emacs/24.*/lisp/cedet
+
 # Setup Python environment
 sudo easy_install jedi epc
 
