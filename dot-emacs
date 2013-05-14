@@ -93,6 +93,7 @@
 ;; Snippets
 ;;
 
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/yasnippet/"))
 (require 'yasnippet) ;; not yasnippet-bundle
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete/"))
