@@ -34,3 +34,6 @@
 [submodule "auto-complete-nxml"]
 	path = auto-complete-nxml
 	url = git://github.com/aki2o/auto-complete-nxml.git
+[submodule "auto-complete-clang"]
+	path = auto-complete-clang
+	url = https://github.com/brianjcj/auto-complete-clang.git

@@ -99,8 +99,10 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete/"))
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete/lib/popup"))
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete/lib/fuzzy"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-complete-clang/"))
 
 (require 'auto-complete-config)
+(require 'auto-complete-clang)
 
 ;; Yasnippet
 (setq yas/trigger-key (kbd "C-c kp-divide")) ;; I will trigger it using auto-complete
@@ -210,17 +212,35 @@
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
   (add-to-list 'ac-sources 'ac-source-yasnippet)
+  (local-set-key (kbd "RET") 'newline-and-indent)
 )
 
 
-(defun my-cedet-hook ()
+(defun my-clang-hook ()
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
+  (local-set-key (kbd "RET") 'newline-and-indent)
 
 ;  (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
 ;  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
   (local-set-key (kbd "\C-xj") 'find-function-at-point)
 ;  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
+  (add-to-list 'ac-sources 'ac-source-clang)
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
+;  (add-to-list 'ac-sources 'ac-source-semantic)
+  (add-to-list 'ac-sources 'ac-source-gtags)
+)
+
+(defun my-cedet-hook ()
+  (make-local-variable 'ac-ignores)
+  (add-to-list 'ac-ignores ";")
+  (local-set-key (kbd "RET") 'newline-and-indent)
+
+;  (local-set-key (kbd "\C-c?") 'semantic-ia-show-doc)
+;  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
+  (local-set-key (kbd "\C-xj") 'find-function-at-point)
+;  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
+  (add-to-list 'ac-sources 'ac-source-clang)
   (add-to-list 'ac-sources 'ac-source-yasnippet)
 ;  (add-to-list 'ac-sources 'ac-source-semantic)
   (add-to-list 'ac-sources 'ac-source-gtags)
@@ -236,6 +256,7 @@
 
   (make-local-variable 'ac-ignores)
   (add-to-list 'ac-ignores ";")
+  (local-set-key (kbd "RET") 'newline-and-indent)
 
   (eclim-mode)
 
@@ -247,8 +268,8 @@
   (local-set-key (kbd "\C-c \C-r") 'eclim-java-find-references)
 )
 
-(add-hook 'c-mode-hook 'my-cedet-hook)
-(add-hook 'c++-mode-hook 'my-cedet-hook)
+(add-hook 'c-mode-hook 'my-clang-hook)
+(add-hook 'c++-mode-hook 'my-clang-hook)
 (add-hook 'java-mode-hook 'my-java-cedet-hook)
 (add-hook 'erlang-mode-hook 'my-cedet-hook)
 (add-hook 'verilog-mode-hook 'my-cedet-hook)
