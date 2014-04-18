@@ -225,10 +225,13 @@
 ;  (local-set-key (kbd "\C-cp") 'semantic-analyze-proto-impl-toggle)
   (local-set-key (kbd "\C-xj") 'find-function-at-point)
 ;  (local-set-key (kbd "\C-c \C-r") 'semantic-symref)
-  (add-to-list 'ac-sources 'ac-source-clang)
-  (add-to-list 'ac-sources 'ac-source-yasnippet)
+  (setq ac-sources '(ac-source-yasnippet
+                     ac-source-clang
+                     ))
+;  (add-to-list 'ac-sources 'ac-source-clang)
+;  (add-to-list 'ac-sources 'ac-source-yasnippet)
 ;  (add-to-list 'ac-sources 'ac-source-semantic)
-  (add-to-list 'ac-sources 'ac-source-gtags)
+;  (add-to-list 'ac-sources 'ac-source-gtags)
 )
 
 (defun my-cedet-hook ()
@@ -327,31 +330,17 @@
         )
 )
 
-;; Flymake
-(add-to-list 'load-path "~/.emacs.d/emacs-flymake-cursor")
-(eval-after-load 'flymake '(require 'flymake-cursor))
+;; Flycheck
+(add-to-list 'load-path "~/.emacs.d/f.el")
+(add-to-list 'load-path "~/.emacs.d/s.el")
+(add-to-list 'load-path "~/.emacs.d/dash.el")
+(add-to-list 'load-path "~/.emacs.d/flycheck")
+(require 'flycheck)
+(add-hook 'after-init-hook 'global-flycheck-mode)
 
-(add-to-list 'load-path "~/.emacs.d/emacs-flymake")
-(require 'flymake)
-(setq flymake-run-in-place nil)
-(add-hook 'find-file-hook 'flymake-find-file-hook)
-
-(when (load "flymake" t)
-  (defun flymake-pyflakes-init ()
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-               'flymake-create-temp-inplace))
-       (local-file (file-relative-name
-            temp-file
-            (file-name-directory buffer-file-name)))
-       (python-path python-shell-extra-pythonpaths))
-      (when (boundp 'python-path)
-        (message "Setting flymake PYTHONPATH to '%s'" (mapconcat 'identity python-path ":")))
-        (setenv "PYTHONPATH" (mapconcat 'identity python-path ":"))
-      (list "~/.emacs.d/pycheckers"  (list local-file))))
-   (add-to-list 'flymake-allowed-file-name-masks
-             '("\\.py\\'" flymake-pyflakes-init)))
-
-(require 'flymake-eclim-java)
+(require 'flycheck-tip)
+;(define-key your-prog-mode (kbd "C-c C-n") 'flycheck-tip-cycle)
+(flycheck-tip-use-timer 'verbose)
 
 ;;;
 ;;; IRC client

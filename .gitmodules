@@ -37,3 +37,18 @@
 [submodule "auto-complete-clang"]
 	path = auto-complete-clang
 	url = https://github.com/brianjcj/auto-complete-clang.git
+[submodule "flycheck"]
+	path = flycheck
+	url = https://github.com/flycheck/flycheck.git
+[submodule "s.el"]
+	path = s.el
+	url = https://github.com/magnars/s.el.git
+[submodule "dash.el"]
+	path = dash.el
+	url = https://github.com/magnars/dash.el.git
+[submodule "f.el"]
+	path = f.el
+	url = https://github.com/rejeep/f.el.git
+[submodule "flycheck-tip"]
+	path = flycheck-tip
+	url = https://github.com/yuutayamada/flycheck-tip.git
